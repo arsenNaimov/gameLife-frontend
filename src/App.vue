@@ -27,9 +27,10 @@ export default {
   },
   data: function() {
     return {
-      field: [], //игровое поле
-      inputFieldSize: null, //размер игрового поля, введенный пользователем
-      gameIsStarted: false, //проверка на запуск игры
+      field: [], //playing field
+      inputFieldSize: null, //the size of the playing field entered by the user
+      gameIsStarted: false, //game start check
+      hostName: "http://localhost:8075/game",
       game: {
         playingFieldSize: 0,
         cells: []
@@ -48,13 +49,13 @@ export default {
       });
 
       axios
-        .post("http://localhost:8075/game", this.game)
+        .post(this.hostName, this.game)
         .then(response => {
           this.game = response.data;
 
           this.field = this.newFields(this.game);
 
-          //При условии, что игра не остановлена, вызывается startGame()
+          //Assuming the game is not stopped, startGame () is called
           if (this.gameIsStarted && this.game.cells.length > 0) {
             this.game.cells = [];
             setTimeout(this.startGame, 10);
@@ -71,12 +72,12 @@ export default {
           );
         });
     },
-    //Остановка игры
+    //Game stop
     stopGame: function() {
       this.gameIsStarted = false;
     },
 
-    //Функция для создания новых таблиц
+    //Function to create new field
     newFields: function(newGame) {
       let newGenerationField = [];
       for (let y = 1; y <= newGame.playingFieldSize; y++) {
@@ -111,9 +112,9 @@ export default {
       }
     }
   },
-  //при закрытии или обновлении браузера с сервера бурутся последние данные и формируется игровое поле
+  //when closing or updating the browser, the latest data is cut from the server and the playing field is formed
   created: function() {
-    axios.get("http://localhost:8075/game").then(response => {
+    axios.get(this.hostName).then(response => {
       if (response.data !== "") {
         this.game = response.data;
 
