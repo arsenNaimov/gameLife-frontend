@@ -54,11 +54,13 @@ export default {
 
           this.field = this.newFields(this.game);
 
+          //При условии, что игра не остановлена, вызывается startGame()
           if (this.gameIsStarted && this.game.cells.length > 0) {
             this.game.cells = [];
             setTimeout(this.startGame, 10);
             this.game.cells = [];
           }
+
         })
         .catch(error => {
           /* eslint-disable no-console */
@@ -69,12 +71,12 @@ export default {
           );
         });
     },
-
+    //Остановка игры
     stopGame: function() {
       this.gameIsStarted = false;
     },
 
-    //функция для создания новых таблиц
+    //Функция для создания новых таблиц
     newFields: function(newGame) {
       let newGenerationField = [];
       for (let y = 1; y <= newGame.playingFieldSize; y++) {
@@ -109,7 +111,7 @@ export default {
       }
     }
   },
-
+  //при закрытии или обновлении браузера с сервера бурутся последние данные и формируется игровое поле
   created: function() {
     axios.get("http://localhost:8075/game").then(response => {
       if (response.data !== "") {
